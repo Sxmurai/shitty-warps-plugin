@@ -1,0 +1,26 @@
+name: Shitty Warps
+main: shit.warps.ShitWarps
+version: 1.0
+
+commands:
+  warp:
+    aliases:
+      - warp
+      - goto
+    description: Warps you to a point on the server
+    usage: <name>
+  warps:
+    aliases:
+      - warps
+    description: Shows u the warps
+  setwarp:
+    aliases:
+      - setwarp
+      - newwarp
+    description: Sets a warp
+    usage: "[name]"
+  deletewarp:
+    aliases:
+      - deletewarp
+    description: Deletes a warp
+    usage: "[name]"
