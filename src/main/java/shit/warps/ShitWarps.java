@@ -60,6 +60,7 @@ public class ShitWarps extends JavaPlugin implements CommandExecutor {
                 return true;
             }
 
+            case "warpto":
             case "goto":
             case "warp": {
                 if (args.length == 0) {
@@ -71,6 +72,7 @@ public class ShitWarps extends JavaPlugin implements CommandExecutor {
                 break;
             }
 
+            case "createwarp":
             case "newwarp":
             case "setwarp": {
                 if (!sender.isOp() || player == null) {
@@ -91,13 +93,30 @@ public class ShitWarps extends JavaPlugin implements CommandExecutor {
                 sender.sendMessage(ChatColor.GREEN + "Placed warp " + name + " at your current position.");
                 break;
             }
+
+            case "delwarp":
+            case "deletewarp": {
+                if (!sender.isOp() || player == null) {
+                    return false;
+                }
+
+                if (args.length == 0) {
+                    sender.sendMessage(ChatColor.RED + "You must provide a name.");
+                    return true;
+                }
+
+                String name = args[0];
+                WARPS.remove(name);
+                FileUtil.save();
+                sender.sendMessage(ChatColor.GREEN + "Removed warp " + name + ".");
+                break;
+            }
         }
 
         return super.onCommand(sender, command, label, args);
     }
 
     public static void teleport(Player player, String name) {
-        player.sendRawMessage(name);
         BlockPosition pos = WARPS.getOrDefault(ChatColor.stripColor(name), null);
         if (pos == null) {
             player.sendRawMessage(ChatColor.RED + "That warp does not exist.");
