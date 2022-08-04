@@ -12,6 +12,7 @@ import shit.warps.util.FileUtil;
 import shit.warps.util.GuiUtil;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -69,7 +70,7 @@ public class ShitWarps extends JavaPlugin implements CommandExecutor {
                 }
 
                 teleport(player, args[0]);
-                break;
+                return true;
             }
 
             case "createwarp":
@@ -91,7 +92,8 @@ public class ShitWarps extends JavaPlugin implements CommandExecutor {
                 FileUtil.save();
 
                 sender.sendMessage(ChatColor.GREEN + "Placed warp " + name + " at your current position.");
-                break;
+
+                return true;
             }
 
             case "delwarp":
@@ -105,19 +107,34 @@ public class ShitWarps extends JavaPlugin implements CommandExecutor {
                     return true;
                 }
 
-                String name = args[0];
-                WARPS.remove(name);
-                FileUtil.save();
-                sender.sendMessage(ChatColor.GREEN + "Removed warp " + name + ".");
-                break;
+                String name = getClosestTo(args[0]);
+                if (WARPS.containsKey(name)) {
+                    WARPS.remove(name);
+                    FileUtil.save();
+                    sender.sendMessage(ChatColor.GREEN + "Removed warp " + name + ".");
+                } else {
+                    player.sendRawMessage(ChatColor.RED + "That warp does not exist.");
+                }
+                return true;
             }
         }
 
         return super.onCommand(sender, command, label, args);
     }
 
+    public static String getClosestTo(String name) {
+        String stripped = ChatColor.stripColor(name);
+        for (Entry<String, BlockPosition> entry : WARPS.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase(stripped)) {
+                return entry.getKey();
+            }
+        }
+
+        return null;
+    }
+
     public static void teleport(Player player, String name) {
-        BlockPosition pos = WARPS.getOrDefault(ChatColor.stripColor(name), null);
+        BlockPosition pos = WARPS.getOrDefault(getClosestTo(name), null);
         if (pos == null) {
             player.sendRawMessage(ChatColor.RED + "That warp does not exist.");
         } else {
